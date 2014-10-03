@@ -1,0 +1,25 @@
+// On commence à manipuler le fichier image en prenant en compte les spécificités de l'ext2
+// On utilise la structure superblock
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "superblock.h"
+
+int main(int argc, char *argv[])
+{
+struct superblock premiersuperblock; //instanciation de la structure
+FILE *fichier;
+
+fichier = fopen(argv[1],"r" );
+fseek(fichier,1024,SEEK_SET); // On positionne le curseur aprés 1024 octet depuis le début du fichier (SEEK_SET)
+fread(&premiersuperblock,sizeof(struct superblock),1, fichier); //Lecture du superblock et remplissage de la structure
+printf("nombre d'inode : %d \n",premiersuperblock.s_inodes_count);
+printf("nombre de blocks : %d \n",premiersuperblock.s_block_count);
+printf("nombre de blocks reserve : %d \n",premiersuperblock.s_r_blocks_count);
+printf("nombre de blocks libre : %d \n",premiersuperblock.s_free_blocks_count);
+
+
+
+}
+
