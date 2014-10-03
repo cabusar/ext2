@@ -1,0 +1,18 @@
+// Première étape, on fait évoluer le curseur de lecture sur le fichier pour en connaitre sa taille
+
+
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+
+        FILE *fichier; //initialise la variable fichier
+        unsigned long int taille; //initialise la variable taille
+        fichier = fopen(argv[1],"r"); //ouvre le fichier passé en param
+        fseek(fichier,0,SEEK_END); // positionne le curseur à la fin du fichier
+        taille = ftell(fichier); // récupère la position du curseur par rapport au début du fichier
+        rewind(fichier); //replace le curseur au début du fichier (bonne pratique)
+        printf("taille du fichier : %d octets.\n",taille); //affiche la taille du fichier
+
+}
