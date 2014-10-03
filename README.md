@@ -9,7 +9,7 @@ Quelques exemples de manipulation de partition EXT2 en C.
 
 Pour la création de l'image : 
 
-dd if=/dev/urandom of=/home/cabusar/master/cour-c/TP/Projet/image.img bs=2048 count=3000 && mkfs -t ext2 /home/user/image.img
+dd if=/dev/urandom of=/home/user/image.img bs=2048 count=3000 && mkfs -t ext2 /home/user/image.img
 
 Pour la compilation du code : 
 
