@@ -1,0 +1,89 @@
+/*
+      ##########################################################################################################
+      # etape 4                                                                                             #  
+      # Ecrire un programme C prenant sur sa ligne de commande un nom de fichier d’image d’une partition ext2  #
+      #  et affichant la liste des fichiers pr ́ sents dans le repertoire racine.                               #
+      ##########################################################################################################
+ */
+
+
+#include<stdio.h>
+#include<stdint.h>
+#include<stdlib.h>
+#include"superblock.h"
+#include"blockgroup.h"
+#include"inode.h"
+#include"direntry.h"
+
+//Question 4
+int main( int argc, char *argv[])
+{
+
+	// RECUPERATION DU FICHIER 
+	FILE * fichier; 
+	fichier = fopen(argv[1],"r");
+	if (fichier ==NULL)
+	{
+		printf("Et le fichier il est ou ? Toti des montagnes !! \n");
+	}	
+	else
+	{
+		// DECLARATION DES STRUCTURES
+
+		struct superblock tetine;
+		struct Block_Group_Descriptor mamelle;
+		struct inode bouzin;
+		struct directory_entry  couloir;
+	
+		// DECLARATION DES VARIABLES
+		int offset , offset2 ,offset3 ,nb_block,sizeblock,i;
+
+		// PREPOSITIONNEMENT DE LECTURE
+		fseek(fichier, 1024, SEEK_SET);
+		fread(&tetine,sizeof(struct superblock),1,fichier);
+
+		// RECUPERATION DE LA TAILLE DU BLOCK
+		nb_block=(tetine.s_first_data_block)+1;  
+		sizeblock=1024 << tetine.s_log_block_size;
+
+		offset=nb_block * sizeblock;  // Positionnement
+
+		// DESCRIPTEUR
+		fseek(fichier, offset ,SEEK_SET);
+		fread(&mamelle,sizeof(struct Block_Group_Descriptor),1,fichier);
+	
+	
+		offset2=(mamelle.bg_inode_table)* sizeblock +sizeof(struct inode) ;
+	
+		// INODES
+		fseek(fichier,offset2,SEEK_SET);
+		fread(&bouzin,sizeof(struct inode),1,fichier);
+	
+		offset3=bouzin.i_block[0]*sizeblock; 
+	
+		// DIR ENTRY 
+		fseek(fichier,offset3,SEEK_SET);
+	
+		int compteur = 0;
+	
+		printf("La racine de l'IMG !! ♬♬♬ \n");
+		while (compteur<bouzin.i_size) 
+			{
+				fread(&couloir,sizeof(struct directory_entry)-sizeof(char*),1,fichier);
+	
+				char* nom = malloc(couloir.name_len+1);
+				fread(nom,couloir.name_len,1,fichier);
+				nom[couloir.name_len]='\0';
+				printf("%s %d \n",nom,couloir.inode);
+		
+				free (nom);
+				compteur+=couloir.rec_len;
+				fseek(fichier,offset3+compteur,SEEK_SET);
+			}	
+		
+	}	
+	return 0;
+	
+		
+	
+}
